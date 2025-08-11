@@ -63,7 +63,7 @@ namespace ECR3_simulator
                 }
             }
         }
-        private async void btnSend_Click(object sender, EventArgs e)
+        private async void btnSend_Click_1(object sender, EventArgs e)
         {
             string ecrString = txtEcrId.Text;
 
@@ -109,7 +109,7 @@ namespace ECR3_simulator
                 timestamp = DateTime.Now
             };
 
-            return JsonConvert.SerializeObject(responseObj, Formatting.Indented);
+            return JsonConvert.SerializeObject(responseObj, Newtonsoft.Json.Formatting.Indented);
         }
         private async Task<string> ReceiveResponseAsync(NetworkStream stream)
         {
@@ -141,7 +141,6 @@ namespace ECR3_simulator
             // User changing value doesn't alter internal counting logic
             // We just allow them to type freely and ignore unless needed for display
         }
-
 
     }
 }

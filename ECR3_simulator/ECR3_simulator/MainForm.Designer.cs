@@ -50,7 +50,9 @@
             // 
             // txtType
             // 
+            txtType.DropDownStyle = ComboBoxStyle.DropDownList;
             txtType.FormattingEnabled = true;
+            txtType.Items.AddRange(new object[] { "sale", "refund", "preauthorization", "void" });
             txtType.Location = new Point(107, 47);
             txtType.Name = "txtType";
             txtType.Size = new Size(114, 23);
@@ -62,7 +64,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(7, 50);
             label2.Name = "label2";
-            label2.Size = new Size(94, 15);
+            label2.Size = new Size(96, 15);
             label2.TabIndex = 2;
             label2.Text = "Transaction Type";
             label2.Click += label2_Click;
@@ -110,6 +112,7 @@
             btnSend.TabIndex = 8;
             btnSend.Text = "Send request";
             btnSend.UseVisualStyleBackColor = true;
+            btnSend.Click += btnSend_Click_1;
             // 
             // MainForm
             // 

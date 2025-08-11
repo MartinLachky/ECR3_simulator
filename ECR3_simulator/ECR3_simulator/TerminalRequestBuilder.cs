@@ -77,7 +77,7 @@ namespace ECR3_simulator
             // Step 4: Generate hash over compact "financial" section
             string compactFinancial = JsonConvert.SerializeObject(
                 new JObject { ["financial"] = requestFinancial },
-                Formatting.None
+                Newtonsoft.Json.Formatting.None
             );
             using (var sha = SHA256.Create())
             {
@@ -93,13 +93,13 @@ namespace ECR3_simulator
             };
 
             // Compact full message, measure length
-            string fullMsgCompact = JsonConvert.SerializeObject(fullMessage, Formatting.None);
+            string fullMsgCompact = JsonConvert.SerializeObject(fullMessage, Newtonsoft.Json.Formatting.None);
             int fullMsgLength = Encoding.UTF8.GetByteCount(fullMsgCompact);
             header["length"] = fullMsgLength; // Update
 
             // Rebuild final message with real length
             fullMessage["header"] = header;
-            string finalJson = JsonConvert.SerializeObject(fullMessage, Formatting.None);
+            string finalJson = JsonConvert.SerializeObject(fullMessage, Newtonsoft.Json.Formatting.None);
             byte[] jsonBytes = Encoding.UTF8.GetBytes(finalJson);
 
             // Create length prefix (big endian, 4 bytes)
