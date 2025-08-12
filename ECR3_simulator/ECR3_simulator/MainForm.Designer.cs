@@ -36,7 +36,6 @@
             txtEcrId = new TextBox();
             btnSettings = new Button();
             btnSend = new Button();
-            lstRecentTransactions = new ListView();
             btnRecentTransactions = new Button();
             SuspendLayout();
             // 
@@ -108,7 +107,7 @@
             // 
             // btnSend
             // 
-            btnSend.Location = new Point(63, 241);
+            btnSend.Location = new Point(82, 306);
             btnSend.Name = "btnSend";
             btnSend.Size = new Size(194, 67);
             btnSend.TabIndex = 8;
@@ -116,22 +115,11 @@
             btnSend.UseVisualStyleBackColor = true;
             btnSend.Click += btnSend_Click;
             // 
-            // lstRecentTransactions
-            // 
-            lstRecentTransactions.FullRowSelect = true;
-            lstRecentTransactions.Location = new Point(7, 314);
-            lstRecentTransactions.MultiSelect = false;
-            lstRecentTransactions.Name = "lstRecentTransactions";
-            lstRecentTransactions.Size = new Size(360, 59);
-            lstRecentTransactions.TabIndex = 9;
-            lstRecentTransactions.UseCompatibleStateImageBehavior = false;
-            lstRecentTransactions.View = View.Details;
-            // 
             // btnRecentTransactions
             // 
             btnRecentTransactions.Location = new Point(285, 2);
             btnRecentTransactions.Name = "btnRecentTransactions";
-            btnRecentTransactions.Size = new Size(82, 28);
+            btnRecentTransactions.Size = new Size(82, 23);
             btnRecentTransactions.TabIndex = 10;
             btnRecentTransactions.Text = "Last Transactions ▼";
             btnRecentTransactions.UseVisualStyleBackColor = true;
@@ -144,7 +132,6 @@
             BackColor = Color.DimGray;
             ClientSize = new Size(379, 385);
             Controls.Add(btnRecentTransactions);
-            Controls.Add(lstRecentTransactions);
             Controls.Add(btnSend);
             Controls.Add(btnSettings);
             Controls.Add(txtEcrId);
@@ -171,7 +158,6 @@
         private TextBox txtEcrId;
         private Button btnSettings;
         private Button btnSend;
-        private ListView lstRecentTransactions;
         private Button btnRecentTransactions;
     }
 }
