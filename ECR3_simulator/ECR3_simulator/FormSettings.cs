@@ -44,5 +44,10 @@ namespace ECR3_simulator
         {
 
         }
+
+        private void txtTerminalIP_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -68,6 +68,7 @@
             txtTerminalIP.Name = "txtTerminalIP";
             txtTerminalIP.Size = new Size(140, 23);
             txtTerminalIP.TabIndex = 3;
+            txtTerminalIP.TextChanged += txtTerminalIP_TextChanged;
             // 
             // btnSave
             // 

@@ -36,6 +36,8 @@
             txtEcrId = new TextBox();
             btnSettings = new Button();
             btnSend = new Button();
+            lstRecentTransactions = new ListView();
+            btnRecentTransactions = new Button();
             SuspendLayout();
             // 
             // label1
@@ -64,7 +66,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(7, 50);
             label2.Name = "label2";
-            label2.Size = new Size(96, 15);
+            label2.Size = new Size(94, 15);
             label2.TabIndex = 2;
             label2.Text = "Transaction Type";
             label2.Click += label2_Click;
@@ -112,7 +114,28 @@
             btnSend.TabIndex = 8;
             btnSend.Text = "Send request";
             btnSend.UseVisualStyleBackColor = true;
-            btnSend.Click += btnSend_Click_1;
+            btnSend.Click += btnSend_Click;
+            // 
+            // lstRecentTransactions
+            // 
+            lstRecentTransactions.FullRowSelect = true;
+            lstRecentTransactions.Location = new Point(7, 314);
+            lstRecentTransactions.MultiSelect = false;
+            lstRecentTransactions.Name = "lstRecentTransactions";
+            lstRecentTransactions.Size = new Size(360, 59);
+            lstRecentTransactions.TabIndex = 9;
+            lstRecentTransactions.UseCompatibleStateImageBehavior = false;
+            lstRecentTransactions.View = View.Details;
+            // 
+            // btnRecentTransactions
+            // 
+            btnRecentTransactions.Location = new Point(285, 2);
+            btnRecentTransactions.Name = "btnRecentTransactions";
+            btnRecentTransactions.Size = new Size(82, 28);
+            btnRecentTransactions.TabIndex = 10;
+            btnRecentTransactions.Text = "Last Transactions ▼";
+            btnRecentTransactions.UseVisualStyleBackColor = true;
+            btnRecentTransactions.Click += btnRecentTransactions_Click;
             // 
             // MainForm
             // 
@@ -120,6 +143,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
             ClientSize = new Size(379, 385);
+            Controls.Add(btnRecentTransactions);
+            Controls.Add(lstRecentTransactions);
             Controls.Add(btnSend);
             Controls.Add(btnSettings);
             Controls.Add(txtEcrId);
@@ -146,5 +171,7 @@
         private TextBox txtEcrId;
         private Button btnSettings;
         private Button btnSend;
+        private ListView lstRecentTransactions;
+        private Button btnRecentTransactions;
     }
 }
