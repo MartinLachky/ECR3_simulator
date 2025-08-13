@@ -9,8 +9,79 @@ using System.Xml;
 
 namespace ECR3_simulator
 {
+
     public static class TerminalRequestBuilder
     {
+        public static byte[] BuildSettlementJsonMessage(
+            string ecr = "1",
+            string language = "cs",
+            bool printReceipt = false,
+            string version = "02",
+            string requestID = "1")
+        {
+            // 1) Pad ECR to 8 digits
+            string ecrStr = ecr.PadLeft(8, '0');
+
+            // 2) Create request payload
+            var payload = new
+            {
+                request = new
+                {
+                    financial = new
+                    {
+                        id = new { ecr = ecrStr },
+                        options = new { language = language, print = printReceipt },
+                        transaction = "settlement"
+                    }
+                }
+            };
+
+            // 3) Serialize payload (compact form) for hash
+            string payloadJsonCompact = JsonConvert.SerializeObject(payload, Newtonsoft.Json.Formatting.None);
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(payloadJsonCompact);
+
+            // 4) Calculate hash over payload only
+            string hashValue;
+            using (var sha = SHA512.Create())
+            {
+                byte[] hashBytes = sha.ComputeHash(payloadBytes);
+                hashValue = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            }
+
+            // 5) Build header with payload length (same as len(data_bytes) in Python)
+            var header = new
+            {
+                requestID = requestID,
+                hash = hashValue,
+                length = payloadBytes.Length,
+                version = version
+            };
+
+            // 6) Full message (header + payload)
+            var message = new
+            {
+                header = header,
+                request = payload.request
+            };
+
+            // 7) Serialize full message (compact form) for sending
+            string finalJson = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None);
+            byte[] finalJsonBytes = Encoding.UTF8.GetBytes(finalJson);
+
+            // 8) Create 4-byte big-endian prefix
+            byte[] lengthPrefix = BitConverter.GetBytes(finalJsonBytes.Length);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(lengthPrefix);
+
+            // 9) Combine prefix + JSON
+            byte[] output = new byte[lengthPrefix.Length + finalJsonBytes.Length];
+            Buffer.BlockCopy(lengthPrefix, 0, output, 0, lengthPrefix.Length);
+            Buffer.BlockCopy(finalJsonBytes, 0, output, lengthPrefix.Length, finalJsonBytes.Length);
+
+            return output;
+        }
+
+
         public static byte[] BuildSaleJsonMessage(
             double amount = 45.63,
             string transactionType = "sale",
@@ -20,7 +91,10 @@ namespace ECR3_simulator
             string sequence = "123456",
             string authorization = "123456",
             string currency = "CZK",
-            string language = "cs"
+            string language = "cs",
+            double tip = 0.00,
+            double cb = 0.00,
+            bool printing = false
         )
         {
             // Step 1: Ensure ECR is set
@@ -38,9 +112,9 @@ namespace ECR3_simulator
                 ["amounts"] = new JObject
                 {
                     ["base"] = amount,
-                    ["cashback"] = 0.00,
+                    ["cashback"] = cb,
                     ["currencyCode"] = currency,
-                    ["tip"] = 0.00
+                    ["tip"] = tip
                 },
                 ["id"] = new JObject
                 {
@@ -55,7 +129,7 @@ namespace ECR3_simulator
                 ["options"] = new JObject
                 {
                     ["language"] = language,
-                    ["print"] = false,
+                    ["print"] = printing,
                     ["sendReceiptData"] = false
                 },
                 ["transaction"] = transactionType
@@ -114,4 +188,6 @@ namespace ECR3_simulator
             return outBytes;
         }
     }
+
+
 }

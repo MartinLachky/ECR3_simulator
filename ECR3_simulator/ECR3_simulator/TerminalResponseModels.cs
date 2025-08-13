@@ -3,82 +3,117 @@ using System.Collections.Generic;
 
 namespace ECR3_simulator
 {
-    public class Header
+    // ===== Common Payment Totals =====
+    public class PaymentTotals
     {
-        public string hash { get; set; }
-        public int length { get; set; }
-        public string requestID { get; set; }
-        public string version { get; set; }
-    }
-
-    // 'base' is a reserved keyword in C#, so we rename to baseAmount
-    public class Amounts
-    {
-        public double baseAmount { get; set; }
+        public decimal credit { get; set; }
+        public int creditCount { get; set; }
+        public decimal creditRev { get; set; }
+        public int creditRevCount { get; set; }
+        public decimal debit { get; set; }
+        public int debitCount { get; set; }
+        public decimal debitRev { get; set; }
+        public int debitRevCount { get; set; }
         public string currencyCode { get; set; }
-        public double total { get; set; }
-        public double original { get; set; }
     }
 
-    public class Emv
-    {
-        public string aid { get; set; }
-        public string aidLabel { get; set; }
-        public string aosa { get; set; }
-        public string cryptogram1 { get; set; }
-        public string ctq { get; set; }
-        public string currencyCode { get; set; }
-        public string ttq { get; set; }
-        public string tvr { get; set; }
-    }
-
+    // ===== Transaction Details =====
     public class Card
     {
-        public string @interface { get; set; }
-        public string name { get; set; }
         public string pan { get; set; }
     }
 
-    public class Id
+    public class TransactionId
     {
-        public string authorization { get; set; }
-        public string batch { get; set; }
         public Card card { get; set; }
-        public string ecr { get; set; }
+        public string authorization { get; set; }
         public string invoice { get; set; }
-        public string merchant { get; set; }
-        public string terminal { get; set; }
+        public string reference { get; set; }         // optional in some responses
+        public string sequenceNumber { get; set; }    // optional in some responses
     }
 
+    public class TransactionInfo
+    {
+        public decimal amount { get; set; }
+        public string currencyCode { get; set; }
+        public string dateTime { get; set; }
+        public TransactionId id { get; set; }
+        public string transaction { get; set; }
+    }
+
+    // ===== Issuer / Acquirer / Overall Totals for Settlement =====
+    public class Issuer
+    {
+        public string name { get; set; }
+        public List<PaymentTotals> totals { get; set; }
+        public List<TransactionInfo> transactions { get; set; }
+    }
+
+    public class Acquirer
+    {
+        public string batch { get; set; }
+        public string dateTime { get; set; }
+        public string mid { get; set; }
+        public string tid { get; set; }
+        public string name { get; set; }
+        public List<PaymentTotals> totals { get; set; }
+        public List<Issuer> issuers { get; set; }
+    }
+
+    public class OverallTotals
+    {
+        public List<Acquirer> acquirers { get; set; }
+    }
+
+    // ===== Result & Common Nodes =====
     public class Result
     {
         public string code { get; set; }
         public string message { get; set; }
+        public string messageEnglish { get; set; }
+        public string terminalResponse { get; set; }
+        public string hostResponse { get; set; }
     }
 
-    public class Dcc
+    public class Amounts
     {
-        public Amounts amounts { get; set; }
-        public string dateTime { get; set; }
-        public string disclaimer { get; set; }
-        public double formattedRate { get; set; }
-        public double markUp { get; set; }
-        public string provider { get; set; }
-        public string status { get; set; }
+        public double baseAmount { get; set; }
+        public double total { get; set; }
+        public string currencyCode { get; set; }
+    }
+
+    public class Emv
+    {
+        public string applicationLabel { get; set; }
+        public string aid { get; set; }
+        public string tvr { get; set; }
+        public string tsi { get; set; }
+    }
+
+    public class Id
+    {
+        public string merchant { get; set; }
+        public string terminal { get; set; }
+        public string ecr { get; set; }
     }
 
     public class Services
     {
-        public Dcc dcc { get; set; }
+        // can be extended if needed for your spec
     }
 
+    // ===== Financial Object (can contain both transaction & settlement data) =====
     public class Financial
     {
+        // Settlement-specific
+        public OverallTotals overallTotals { get; set; }
+
+        // Transaction-specific
         public Amounts amounts { get; set; }
         public string dateTime { get; set; }
         public Emv emv { get; set; }
         public object flags { get; set; }
-        public List<object> fleetProducts { get; set; }
+        public object fleetProducts { get; set; }
         public Id id { get; set; }
         public Result result { get; set; }
         public Services services { get; set; }
@@ -88,6 +123,14 @@ namespace ECR3_simulator
     public class Response
     {
         public Financial financial { get; set; }
+    }
+
+    public class Header
+    {
+        public string requestID { get; set; }
+        public string hash { get; set; }
+        public int length { get; set; }
+        public string version { get; set; }
     }
 
     public class Root

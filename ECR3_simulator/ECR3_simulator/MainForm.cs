@@ -33,6 +33,11 @@ namespace ECR3_simulator
 
             txtAmount.Text = "100,00";
             txtType.Text = "sale";
+            txtTip.Text = "0,00";
+            txtCb.Text = "0,00";
+            txtCurrency.Text = "CZK";
+            txtLanguage.Text = "cs";
+            txtPrinting.Text = "false";
         }
         private void label1_Click(object sender, EventArgs e)
         {
@@ -80,7 +85,12 @@ namespace ECR3_simulator
             byte[] saleMessage = TerminalRequestBuilder.BuildSaleJsonMessage(
                 amount: double.Parse(txtAmount.Text, CultureInfo.GetCultureInfo("cs-CZ")),
                 transactionType: txtType.Text,
-                ecr: ecrString
+                ecr: ecrString,
+                tip: double.Parse(txtTip.Text, CultureInfo.GetCultureInfo("cs-CZ")),
+                cb: double.Parse(txtCb.Text, CultureInfo.GetCultureInfo("cs-CZ")),
+                currency: txtCurrency.Text,
+                language: txtLanguage.Text,
+                printing: bool.Parse(txtPrinting.Text)
             );
 
             using (TcpClient client = new TcpClient())
@@ -100,6 +110,30 @@ namespace ECR3_simulator
 
             if (int.TryParse(txtEcrId.Text, out int ecrId))
                 txtEcrId.Text = (ecrId + 1).ToString("D8");
+        }
+
+        private async void btnSettle_Click(object sender, EventArgs e)
+        {
+            string ecrString = "99999999";
+            byte[] settleMessage = TerminalRequestBuilder.BuildSettlementJsonMessage(ecr: ecrString);
+
+            using (TcpClient client = new TcpClient())
+            {
+                await client.ConnectAsync(terminalIP, terminalPort);
+                using (NetworkStream stream = client.GetStream())
+                {
+                    // Send settle request
+                    await stream.WriteAsync(settleMessage, 0, settleMessage.Length);
+
+                    // Get the settlement JSON string from the terminal
+                    string jsonResponse = await ReceiveResponseAsync(stream);
+
+                    // Show it in the same form as transactions
+                    FormResponse respForm = new FormResponse();
+                    respForm.ShowResponse(jsonResponse); // raw JSON rendered
+                    respForm.Show();
+                }
+            }
         }
 
         private async Task<string> ReceiveResponseAsync(NetworkStream stream)
@@ -277,6 +311,11 @@ namespace ECR3_simulator
                     }
                 }
             }
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
