@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ECR3_simulator
@@ -12,75 +15,74 @@ namespace ECR3_simulator
 
         public void ShowResponse(string json)
         {
-            // Parse JSON → Root model
+            rtbResponseDisplay.Clear();
+
             string cleanedJson = json.Replace("\"base\":", "\"baseAmount\":");
 
             try
             {
-                var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject<Root>(cleanedJson);
+                var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject<JToken>(cleanedJson);
 
-                // Build pretty string with all non-empty values
-                var sb = new System.Text.StringBuilder();
+                var sb = new StringBuilder();
                 AppendProperties(parsed, sb, "");
 
-                rtbResponseDisplay.Text = sb.ToString();
+                // If pretty-print produced output, show it
+                if (sb.Length > 0)
+                {
+                    rtbResponseDisplay.AppendText(sb.ToString());
+                }
+                else
+                {
+                    // Parsing OK but nothing appended – still show original JSON
+                    rtbResponseDisplay.AppendText(json);
+                }
             }
             catch
             {
-                // If parsing fails, just show raw JSON
-                rtbResponseDisplay.Text = json;
+                rtbResponseDisplay.AppendText(json);
             }
         }
 
-        private void AppendProperties(object obj, System.Text.StringBuilder sb, string indent)
+        private void AppendProperties(object node, StringBuilder sb, string indent)
         {
-            if (obj == null)
-                return;
-
-            // Handle lists
-            if (obj is System.Collections.IEnumerable enumerable && !(obj is string))
+            if (node is JObject obj)
             {
-                foreach (var item in enumerable)
+                foreach (var prop in obj.Properties())
                 {
-                    AppendProperties(item, sb, indent + "  ");
-                }
-                return;
-            }
-
-            var type = obj.GetType();
-            var props = type.GetProperties();
-
-            if (props.Length > 0) // Complex object
-            {
-                foreach (var prop in props)
-                {
-                    var value = prop.GetValue(obj, null);
-
-                    if (value == null)
-                        continue;
-
-                    // If it's a string, skip empty
-                    if (value is string strVal && string.IsNullOrWhiteSpace(strVal))
-                        continue;
-
-                    // If complex object or list, recurse
-                    if (!(value is string) && !(value.GetType().IsValueType))
+                    if (prop.Value is JValue val) // simple value: one line
+                    {
+                        sb.AppendLine($"{indent}{prop.Name}: {val.Value}");
+                    }
+                    else // complex value: name on one line, then recurse
                     {
                         sb.AppendLine($"{indent}{prop.Name}:");
-                        AppendProperties(value, sb, indent + "  ");
+                        AppendProperties(prop.Value, sb, indent + "  ");
+                    }
+                }
+            }
+            else if (node is JArray arr)
+            {
+                foreach (var item in arr)
+                {
+                    sb.Append($"{indent}- ");
+                    if (item is JValue val)
+                    {
+                        sb.AppendLine($"{val.Value}");
                     }
                     else
                     {
-                        sb.AppendLine($"{indent}{prop.Name}: {value}");
+                        sb.AppendLine();
+                        AppendProperties(item, sb, indent + "  ");
                     }
                 }
             }
-            else
+            else if (node is JValue val)
             {
-                // Primitive value type
-                sb.AppendLine($"{indent}{obj}");
+                sb.AppendLine($"{indent}{val.Value}");
             }
         }
+
+
         private void rtbResponseDisplay_TextChanged(object sender, EventArgs e)
         {
             // Optionally leave empty, or add logic if needed

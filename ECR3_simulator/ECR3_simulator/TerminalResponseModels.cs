@@ -138,4 +138,37 @@ namespace ECR3_simulator
         public Header header { get; set; }
         public Response response { get; set; }
     }
+    public class StatusResponseRoot
+    {
+        public Header header { get; set; }
+        public StatusResponseBody response { get; set; }
+    }
+
+    public class StatusResponseBody
+    {
+        public StatusConfig config { get; set; }
+        public Status status { get; set; }
+    }
+
+    public class StatusConfig
+    {
+        public List<AcquirerData> acquirerData { get; set; }
+        public string applicationVersion { get; set; }
+        public string profileId { get; set; }
+        public string serialNumber { get; set; }
+    }
+
+    public class AcquirerData
+    {
+        public string acquirerMid { get; set; }
+        public string acquirerName { get; set; }
+        public string acquirerTid { get; set; }
+    }
+
+    public class Status
+    {
+        public string code { get; set; }            // idle / busy / notAllowed ...
+        public string message { get; set; }         // Localised message
+        public string messageEnglish { get; set; }  // English message
+    }
 }

@@ -12,6 +12,63 @@ namespace ECR3_simulator
 
     public static class TerminalRequestBuilder
     {
+        public static byte[] BuildStatusInfoJsonMessage(
+            string version = "02",
+            string requestID = "1")
+        {
+            // 1) Build request object (empty status)
+            var requestObj = new
+            {
+                request = new
+                {
+                    status = new { } // empty JSON object as per your spec
+                }
+            };
+
+            // 2) Serialize just the "request" object for hashing & length
+            string requestJson = JsonConvert.SerializeObject(requestObj, Newtonsoft.Json.Formatting.None);
+            byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
+
+            // 3) Calculate hash over the request part
+            string hash;
+            using (var sha = SHA512.Create())
+            {
+                hash = BitConverter.ToString(sha.ComputeHash(requestBytes))
+                                   .Replace("-", "")
+                                   .ToLowerInvariant();
+            }
+
+            // 4) Build header with requestID, version, hash, and length
+            var header = new
+            {
+                hash = hash,
+                length = requestBytes.Length,
+                version = version,
+                requestID = requestID
+            };
+
+            // 5) Combine header + request into a final message object
+            var finalMessage = new
+            {
+                header = header,
+                request = requestObj.request
+            };
+
+            // 6) Serialize full JSON
+            string finalJson = JsonConvert.SerializeObject(finalMessage, Newtonsoft.Json.Formatting.None);
+            byte[] jsonBytes = Encoding.UTF8.GetBytes(finalJson);
+
+            // 7) Build 4-byte big-endian length prefix + JSON
+            byte[] lengthPrefix = BitConverter.GetBytes(jsonBytes.Length);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(lengthPrefix);
+
+            byte[] outBytes = new byte[lengthPrefix.Length + jsonBytes.Length];
+            Buffer.BlockCopy(lengthPrefix, 0, outBytes, 0, 4);
+            Buffer.BlockCopy(jsonBytes, 0, outBytes, 4, jsonBytes.Length);
+
+            return outBytes;
+        }
         public static byte[] BuildSettlementJsonMessage(
             string ecr = "1",
             string language = "cs",

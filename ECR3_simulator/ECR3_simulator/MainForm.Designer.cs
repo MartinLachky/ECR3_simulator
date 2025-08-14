@@ -48,6 +48,7 @@
             label7 = new Label();
             txtPrinting = new ComboBox();
             btnSettlement = new Button();
+            btnStatus = new Button();
             SuspendLayout();
             // 
             // label1
@@ -236,12 +237,23 @@
             btnSettlement.UseVisualStyleBackColor = true;
             btnSettlement.Click += btnSettle_Click;
             // 
+            // btnStatus
+            // 
+            btnStatus.Location = new Point(82, 462);
+            btnStatus.Name = "btnStatus";
+            btnStatus.Size = new Size(194, 24);
+            btnStatus.TabIndex = 22;
+            btnStatus.Text = "Status info";
+            btnStatus.UseVisualStyleBackColor = true;
+            btnStatus.Click += btnStatus_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
             ClientSize = new Size(367, 498);
+            Controls.Add(btnStatus);
             Controls.Add(btnSettlement);
             Controls.Add(txtPrinting);
             Controls.Add(label7);
@@ -264,7 +276,7 @@
             Controls.Add(label1);
             ForeColor = SystemColors.ControlText;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Simulator 1.0.0";
             Load += MainForm_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -292,5 +304,6 @@
         private Label label7;
         private ComboBox txtPrinting;
         private Button btnSettlement;
+        private Button btnStatus;
     }
 }

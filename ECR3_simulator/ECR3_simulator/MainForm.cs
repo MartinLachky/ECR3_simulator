@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Globalization;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.Globalization;
-using System.Data.SQLite;
-using System.Collections.Generic;
 
 namespace ECR3_simulator
 {
@@ -11,6 +12,9 @@ namespace ECR3_simulator
     {
         private string terminalIP;
         private int terminalPort;
+        private TcpClient sharedClient;
+        private NetworkStream sharedStream;
+        private CancellationTokenSource connectionCts;
 
         public MainForm()
         {
@@ -93,46 +97,161 @@ namespace ECR3_simulator
                 printing: bool.Parse(txtPrinting.Text)
             );
 
-            using (TcpClient client = new TcpClient())
-            {
-                await client.ConnectAsync(terminalIP, terminalPort);
-                using (NetworkStream stream = client.GetStream())
-                {
-                    await stream.WriteAsync(saleMessage, 0, saleMessage.Length);
+            sharedClient = new TcpClient();
+            await sharedClient.ConnectAsync(terminalIP, terminalPort);
+            sharedStream = sharedClient.GetStream();
 
-                    string jsonResponse = await ReceiveResponseAsync(stream);
+            // Start listening for all messages
+            connectionCts = new CancellationTokenSource();
+            _ = Task.Run(() => ConnectionMessageLoop(sharedStream, connectionCts.Token));
 
-                    FormResponse respForm = new FormResponse();
-                    respForm.ShowResponse(jsonResponse);
-                    respForm.Show();
-                }
-            }
+            // Send transaction request
+            await sharedStream.WriteAsync(saleMessage, 0, saleMessage.Length);
 
+            // Increment ECR ID
             if (int.TryParse(txtEcrId.Text, out int ecrId))
                 txtEcrId.Text = (ecrId + 1).ToString("D8");
         }
+
+
+
+
+
+        private async void btnStatus_Click(object sender, EventArgs e)
+        {
+            byte[] statusMessage = TerminalRequestBuilder.BuildStatusInfoJsonMessage("02", "1");
+
+            try
+            {
+                if (sharedStream != null && sharedStream.CanWrite)
+                {
+                    // ✅ Use existing active connection
+                    await sharedStream.WriteAsync(statusMessage, 0, statusMessage.Length);
+                }
+                else
+                {
+                    // ✅ No active transaction — open a temporary connection just for status
+                    using (var client = new TcpClient())
+                    {
+                        await client.ConnectAsync(terminalIP, terminalPort);
+
+                        using (var stream = client.GetStream())
+                        {
+                            // Send the request
+                            await stream.WriteAsync(statusMessage, 0, statusMessage.Length);
+
+                            // Wait for the reply
+                            string jsonResponse = await ReceiveResponseAsync(stream);
+
+                            // Show it in the regular response form
+                            FormResponse respForm = new FormResponse();
+                            respForm.ShowResponse(jsonResponse);
+                            respForm.Show();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sending StatusInfo: {ex.Message}");
+            }
+        }
+
+
+
+
+
 
         private async void btnSettle_Click(object sender, EventArgs e)
         {
             string ecrString = "99999999";
             byte[] settleMessage = TerminalRequestBuilder.BuildSettlementJsonMessage(ecr: ecrString);
 
-            using (TcpClient client = new TcpClient())
+            sharedClient = new TcpClient();
+            await sharedClient.ConnectAsync(terminalIP, terminalPort);
+            sharedStream = sharedClient.GetStream();
+
+            // Start listening for all messages
+            connectionCts = new CancellationTokenSource();
+            _ = Task.Run(() => ConnectionMessageLoop(sharedStream, connectionCts.Token));
+
+            // Send settlement request
+            await sharedStream.WriteAsync(settleMessage, 0, settleMessage.Length);
+        }
+
+
+
+
+        private async Task ConnectionMessageLoop(NetworkStream stream, CancellationToken token)
+        {
+            try
             {
-                await client.ConnectAsync(terminalIP, terminalPort);
-                using (NetworkStream stream = client.GetStream())
+                while (!token.IsCancellationRequested && stream != null && stream.CanRead)
                 {
-                    // Send settle request
-                    await stream.WriteAsync(settleMessage, 0, settleMessage.Length);
+                    string json = await ReceiveResponseAsync(stream);
 
-                    // Get the settlement JSON string from the terminal
-                    string jsonResponse = await ReceiveResponseAsync(stream);
+                    // Show every message
+                    Invoke(new Action(() =>
+                    {
+                        var respForm = new FormResponse();
+                        respForm.ShowResponse(json);
+                        respForm.Show();
+                    }));
 
-                    // Show it in the same form as transactions
-                    FormResponse respForm = new FormResponse();
-                    respForm.ShowResponse(jsonResponse); // raw JSON rendered
-                    respForm.Show();
+                    // ===== Detect end-of-transaction messages =====
+                    try
+                    {
+                        var parsed = JsonConvert.DeserializeObject<Root>(json);
+
+                        if (parsed?.response?.financial != null)
+                        {
+                            var tType = parsed.response.financial.transaction?.ToLowerInvariant();
+                            var code = parsed.response.financial.result?.code;
+
+                            if (!string.IsNullOrEmpty(code) &&
+                                (tType == "sale" || tType == "refund" || tType == "settlement"))
+                            {
+                                // This is the final message for the transaction/settlement
+                                CloseCurrentConnection();
+                                break; // Exit the loop
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore parse errors for non-financial messages (e.g. StatusInfo)
+                    }
                 }
+            }
+            catch (IOException)
+            {
+                // Connection closed by terminal
+            }
+            catch (ObjectDisposedException)
+            {
+                // Stream was closed locally
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() => MessageBox.Show($"Listener error: {ex.Message}")));
+            }
+        }
+
+
+        private void CloseCurrentConnection()
+        {
+            try
+            {
+                connectionCts?.Cancel();
+                sharedStream?.Dispose();
+                sharedClient?.Close();
+            }
+            catch { }
+            finally
+            {
+                sharedStream = null;
+                sharedClient = null;
+                connectionCts = null;
             }
         }
 
@@ -163,7 +282,8 @@ namespace ECR3_simulator
                 string cleanedJson = jsonResponse.Replace("\"base\":", "\"baseAmount\":");
                 Root parsed = JsonConvert.DeserializeObject<Root>(cleanedJson);
 
-                if (parsed != null)
+                if (parsed?.response?.financial != null &&
+                   !string.Equals(parsed.response.financial.transaction, "status", StringComparison.OrdinalIgnoreCase))
                 {
                     StoreTerminalResponse(parsed, jsonResponse);
                 }
@@ -175,6 +295,7 @@ namespace ECR3_simulator
 
             return jsonResponse;
         }
+
 
         private void StoreTerminalResponse(Root parsed, string rawJson)
         {
@@ -259,6 +380,7 @@ namespace ECR3_simulator
             dropDown.Items.Add(host);
             dropDown.Show(btnRecentTransactions, new Point(0, btnRecentTransactions.Height));
         }
+
 
         // ---------------- HELPERS ----------------
 
