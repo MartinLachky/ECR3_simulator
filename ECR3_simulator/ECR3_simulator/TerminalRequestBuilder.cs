@@ -143,9 +143,6 @@ namespace ECR3_simulator
             double amount = 45.63,
             string transactionType = "sale",
             string ecr = null,
-            string invoice = "123456",
-            string reference = "123456",
-            string sequence = "123456",
             string authorization = "123456",
             string currency = "CZK",
             string language = "cs",
@@ -178,10 +175,7 @@ namespace ECR3_simulator
                     ["acquirer"] = "",
                     ["authorization"] = authorization,
                     ["cardName"] = "",
-                    ["ecr"] = ecr,
-                    ["invoice"] = invoice,
-                    ["reference"] = reference,
-                    ["sequenceNumber"] = sequence
+                    ["ecr"] = ecr
                 },
                 ["options"] = new JObject
                 {
@@ -201,7 +195,7 @@ namespace ECR3_simulator
             {
                 ["hash"] = "",
                 ["length"] = 0,
-                ["requestID"] = sequence,
+                ["requestID"] = "123456",
                 ["version"] = "02"
             };
 

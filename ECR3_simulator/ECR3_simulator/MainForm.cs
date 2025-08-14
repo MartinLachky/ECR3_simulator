@@ -209,7 +209,7 @@ namespace ECR3_simulator
                             var code = parsed.response.financial.result?.code;
 
                             if (!string.IsNullOrEmpty(code) &&
-                                (tType == "sale" || tType == "refund" || tType == "settlement"))
+                                (tType == "sale" || tType == "refund" || tType == "settlement" || tType == "void" || tType == "preauth-completion" || tType == "preauthorization"))
                             {
                                 // This is the final message for the transaction/settlement
                                 CloseCurrentConnection();
