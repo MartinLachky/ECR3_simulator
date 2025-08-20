@@ -24,29 +24,29 @@
 
         private void InitializeComponent()
         {
-            this.rtbResponseDisplay = new System.Windows.Forms.RichTextBox();
-            this.SuspendLayout();
+            rtbResponseDisplay = new RichTextBox();
+            SuspendLayout();
             // 
             // rtbResponseDisplay
             // 
-            this.rtbResponseDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbResponseDisplay.Location = new System.Drawing.Point(0, 0);
-            this.rtbResponseDisplay.Name = "rtbResponseDisplay";
-            this.rtbResponseDisplay.ReadOnly = true;
-            this.rtbResponseDisplay.Size = new System.Drawing.Size(584, 361);
-            this.rtbResponseDisplay.TabIndex = 0;
-            this.rtbResponseDisplay.Text = "";
-            this.rtbResponseDisplay.TextChanged += new System.EventHandler(this.rtbResponseDisplay_TextChanged);
+            rtbResponseDisplay.Dock = DockStyle.Fill;
+            rtbResponseDisplay.Location = new Point(0, 0);
+            rtbResponseDisplay.Name = "rtbResponseDisplay";
+            rtbResponseDisplay.ReadOnly = true;
+            rtbResponseDisplay.Size = new Size(286, 561);
+            rtbResponseDisplay.TabIndex = 0;
+            rtbResponseDisplay.Text = "";
+            rtbResponseDisplay.TextChanged += rtbResponseDisplay_TextChanged;
             // 
             // FormResponse
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 361);
-            this.Controls.Add(this.rtbResponseDisplay);
-            this.Name = "FormResponse";
-            this.Text = "Terminal Response";
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(286, 561);
+            Controls.Add(rtbResponseDisplay);
+            Name = "FormResponse";
+            Text = "Terminal Response";
+            ResumeLayout(false);
         }
 
         #endregion

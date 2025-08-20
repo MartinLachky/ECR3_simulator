@@ -49,12 +49,18 @@
             txtPrinting = new ComboBox();
             btnSettlement = new Button();
             btnStatus = new Button();
+            label8 = new Label();
+            txtInvoice = new TextBox();
+            label9 = new Label();
+            txtReference = new TextBox();
+            label10 = new Label();
+            txtSequence = new TextBox();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(41, 100);
+            label1.Location = new Point(96, 100);
             label1.Name = "label1";
             label1.Size = new Size(51, 15);
             label1.TabIndex = 0;
@@ -66,7 +72,7 @@
             txtType.DropDownStyle = ComboBoxStyle.DropDownList;
             txtType.FormattingEnabled = true;
             txtType.Items.AddRange(new object[] { "sale", "refund", "preauthorization", "void", "preauth-completion" });
-            txtType.Location = new Point(107, 68);
+            txtType.Location = new Point(162, 68);
             txtType.Name = "txtType";
             txtType.Size = new Size(114, 23);
             txtType.TabIndex = 1;
@@ -75,7 +81,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(-2, 71);
+            label2.Location = new Point(53, 71);
             label2.Name = "label2";
             label2.Size = new Size(94, 15);
             label2.TabIndex = 2;
@@ -84,7 +90,7 @@
             // 
             // txtAmount
             // 
-            txtAmount.Location = new Point(107, 97);
+            txtAmount.Location = new Point(162, 97);
             txtAmount.Name = "txtAmount";
             txtAmount.Size = new Size(169, 23);
             txtAmount.TabIndex = 3;
@@ -93,7 +99,7 @@
             // ECR_ID
             // 
             ECR_ID.AutoSize = true;
-            ECR_ID.Location = new Point(50, 153);
+            ECR_ID.Location = new Point(105, 153);
             ECR_ID.Name = "ECR_ID";
             ECR_ID.Size = new Size(42, 15);
             ECR_ID.TabIndex = 5;
@@ -102,7 +108,7 @@
             // 
             // txtEcrId
             // 
-            txtEcrId.Location = new Point(107, 153);
+            txtEcrId.Location = new Point(162, 153);
             txtEcrId.Name = "txtEcrId";
             txtEcrId.Size = new Size(135, 23);
             txtEcrId.TabIndex = 6;
@@ -119,7 +125,7 @@
             // 
             // btnSend
             // 
-            btnSend.Location = new Point(82, 374);
+            btnSend.Location = new Point(122, 441);
             btnSend.Name = "btnSend";
             btnSend.Size = new Size(194, 67);
             btnSend.TabIndex = 8;
@@ -129,7 +135,7 @@
             // 
             // btnRecentTransactions
             // 
-            btnRecentTransactions.Location = new Point(285, 2);
+            btnRecentTransactions.Location = new Point(363, 2);
             btnRecentTransactions.Name = "btnRecentTransactions";
             btnRecentTransactions.Size = new Size(82, 23);
             btnRecentTransactions.TabIndex = 10;
@@ -140,7 +146,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(67, 185);
+            label3.Location = new Point(122, 185);
             label3.Name = "label3";
             label3.Size = new Size(23, 15);
             label3.TabIndex = 11;
@@ -148,7 +154,7 @@
             // 
             // txtTip
             // 
-            txtTip.Location = new Point(107, 182);
+            txtTip.Location = new Point(162, 182);
             txtTip.Name = "txtTip";
             txtTip.Size = new Size(135, 23);
             txtTip.TabIndex = 12;
@@ -156,7 +162,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(32, 214);
+            label4.Location = new Point(87, 214);
             label4.Name = "label4";
             label4.Size = new Size(58, 15);
             label4.TabIndex = 13;
@@ -165,7 +171,7 @@
             // 
             // txtCb
             // 
-            txtCb.Location = new Point(107, 211);
+            txtCb.Location = new Point(162, 211);
             txtCb.Name = "txtCb";
             txtCb.Size = new Size(135, 23);
             txtCb.TabIndex = 14;
@@ -173,7 +179,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(34, 127);
+            label5.Location = new Point(89, 127);
             label5.Name = "label5";
             label5.Size = new Size(55, 15);
             label5.TabIndex = 15;
@@ -184,7 +190,7 @@
             txtCurrency.DropDownStyle = ComboBoxStyle.DropDownList;
             txtCurrency.FormattingEnabled = true;
             txtCurrency.Items.AddRange(new object[] { "CZK", "EUR", "HUF", "RON", "RUB", "GBP" });
-            txtCurrency.Location = new Point(107, 124);
+            txtCurrency.Location = new Point(162, 124);
             txtCurrency.Name = "txtCurrency";
             txtCurrency.Size = new Size(70, 23);
             txtCurrency.TabIndex = 16;
@@ -192,7 +198,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(34, 243);
+            label6.Location = new Point(89, 243);
             label6.Name = "label6";
             label6.Size = new Size(59, 15);
             label6.TabIndex = 17;
@@ -203,7 +209,7 @@
             txtLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             txtLanguage.FormattingEnabled = true;
             txtLanguage.Items.AddRange(new object[] { "cs", "en", "de", "sk", "es", "fr", "hu", "it", "ro" });
-            txtLanguage.Location = new Point(107, 240);
+            txtLanguage.Location = new Point(162, 240);
             txtLanguage.Name = "txtLanguage";
             txtLanguage.Size = new Size(51, 23);
             txtLanguage.TabIndex = 18;
@@ -211,7 +217,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(18, 275);
+            label7.Location = new Point(73, 275);
             label7.Name = "label7";
             label7.Size = new Size(74, 15);
             label7.TabIndex = 19;
@@ -222,14 +228,14 @@
             txtPrinting.DropDownStyle = ComboBoxStyle.DropDownList;
             txtPrinting.FormattingEnabled = true;
             txtPrinting.Items.AddRange(new object[] { "true", "false" });
-            txtPrinting.Location = new Point(107, 272);
+            txtPrinting.Location = new Point(162, 272);
             txtPrinting.Name = "txtPrinting";
             txtPrinting.Size = new Size(66, 23);
             txtPrinting.TabIndex = 20;
             // 
             // btnSettlement
             // 
-            btnSettlement.Location = new Point(118, 1);
+            btnSettlement.Location = new Point(171, 2);
             btnSettlement.Name = "btnSettlement";
             btnSettlement.Size = new Size(103, 24);
             btnSettlement.TabIndex = 21;
@@ -239,7 +245,7 @@
             // 
             // btnStatus
             // 
-            btnStatus.Location = new Point(82, 462);
+            btnStatus.Location = new Point(122, 527);
             btnStatus.Name = "btnStatus";
             btnStatus.Size = new Size(194, 24);
             btnStatus.TabIndex = 22;
@@ -247,12 +253,67 @@
             btnStatus.UseVisualStyleBackColor = true;
             btnStatus.Click += btnStatus_Click;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(100, 304);
+            label8.Name = "label8";
+            label8.Size = new Size(45, 15);
+            label8.TabIndex = 23;
+            label8.Text = "Invoice";
+            label8.Click += label8_Click;
+            // 
+            // txtInvoice
+            // 
+            txtInvoice.Location = new Point(162, 301);
+            txtInvoice.Name = "txtInvoice";
+            txtInvoice.Size = new Size(79, 23);
+            txtInvoice.TabIndex = 24;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(53, 336);
+            label9.Name = "label9";
+            label9.Size = new Size(104, 15);
+            label9.TabIndex = 25;
+            label9.Text = "Reference number";
+            // 
+            // txtReference
+            // 
+            txtReference.Location = new Point(162, 333);
+            txtReference.Name = "txtReference";
+            txtReference.Size = new Size(112, 23);
+            txtReference.TabIndex = 26;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(54, 366);
+            label10.Name = "label10";
+            label10.Size = new Size(103, 15);
+            label10.TabIndex = 27;
+            label10.Text = "Sequence number";
+            // 
+            // txtSequence
+            // 
+            txtSequence.Location = new Point(162, 363);
+            txtSequence.Name = "txtSequence";
+            txtSequence.Size = new Size(110, 23);
+            txtSequence.TabIndex = 28;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
-            ClientSize = new Size(367, 498);
+            ClientSize = new Size(457, 579);
+            Controls.Add(txtSequence);
+            Controls.Add(label10);
+            Controls.Add(txtReference);
+            Controls.Add(label9);
+            Controls.Add(txtInvoice);
+            Controls.Add(label8);
             Controls.Add(btnStatus);
             Controls.Add(btnSettlement);
             Controls.Add(txtPrinting);
@@ -305,5 +366,11 @@
         private ComboBox txtPrinting;
         private Button btnSettlement;
         private Button btnStatus;
+        private Label label8;
+        private TextBox txtInvoice;
+        private Label label9;
+        private TextBox txtReference;
+        private Label label10;
+        private TextBox txtSequence;
     }
 }

@@ -28,12 +28,12 @@ namespace ECR3_simulator
             txtEcrId.Text = initialEcrId.ToString("D8");
 
             terminalIP = string.IsNullOrEmpty(Properties.Settings.Default.TerminalIP)
-                         ? "127.0.0.1"
+                         ? "192.168.0.1"
                          : Properties.Settings.Default.TerminalIP;
 
             terminalPort = Properties.Settings.Default.TerminalPort != 0
                            ? Properties.Settings.Default.TerminalPort
-                           : 5000;
+                           : 1818;
 
             txtAmount.Text = "100,00";
             txtType.Text = "sale";
@@ -94,7 +94,10 @@ namespace ECR3_simulator
                 cb: double.Parse(txtCb.Text, CultureInfo.GetCultureInfo("cs-CZ")),
                 currency: txtCurrency.Text,
                 language: txtLanguage.Text,
-                printing: bool.Parse(txtPrinting.Text)
+                printing: bool.Parse(txtPrinting.Text),
+                invoice: txtInvoice.Text,
+                reference: txtReference.Text,
+                sequence: txtSequence.Text
             );
 
             sharedClient = new TcpClient();
@@ -436,6 +439,11 @@ namespace ECR3_simulator
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
         {
 
         }

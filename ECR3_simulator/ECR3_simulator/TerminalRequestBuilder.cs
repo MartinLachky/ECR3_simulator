@@ -148,7 +148,10 @@ namespace ECR3_simulator
             string language = "cs",
             double tip = 0.00,
             double cb = 0.00,
-            bool printing = false
+            bool printing = false,
+            string sequence = "",
+            string reference = "",
+            string invoice = ""
         )
         {
             // Step 1: Ensure ECR is set
@@ -175,7 +178,10 @@ namespace ECR3_simulator
                     ["acquirer"] = "",
                     ["authorization"] = authorization,
                     ["cardName"] = "",
-                    ["ecr"] = ecr
+                    ["ecr"] = ecr,
+                    ["invoice"] = invoice,
+                    ["reference"] = reference,
+                    ["sequenceNumber"] = sequence
                 },
                 ["options"] = new JObject
                 {

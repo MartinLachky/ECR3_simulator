@@ -85,7 +85,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DimGray;
-            ClientSize = new Size(254, 137);
+            ClientSize = new Size(233, 134);
             Controls.Add(btnSave);
             Controls.Add(txtTerminalIP);
             Controls.Add(label2);
